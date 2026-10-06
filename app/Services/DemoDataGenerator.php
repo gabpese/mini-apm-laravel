@@ -122,7 +122,13 @@ class DemoDataGenerator
      */
     private function session(array $user, string $version, CarbonImmutable $date, CarbonImmutable $end): array
     {
-        $at = $date->addSeconds(mt_rand(8 * 3600, 22 * 3600));
+        // A full day has its sessions between 8:00 and 22:00. Today is still going on, so its sessions
+        // are spread from midnight to "now" (leaving room for the events that follow a session start).
+        // Otherwise the last point of every chart would fall to zero, as if the app had gone down.
+        $elapsed = (int) $date->diffInSeconds($end);
+        $at = $elapsed < 86400
+            ? $date->addSeconds(mt_rand(0, max(0, $elapsed - 3600)))
+            : $date->addSeconds(mt_rand(8 * 3600, 22 * 3600));
         $base = ['app_version' => $version, 'user_ref' => $user['ref']];
 
         $events = [$base + [

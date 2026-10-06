@@ -119,3 +119,17 @@ describe('with --api-key', function () {
         expect(Event::count())->toBe(0);
     });
 });
+
+it('fills today too, so the last point of a chart does not fall to zero', function () {
+    // Early morning: with sessions only between 8:00 and 22:00, today would be empty.
+    $until = now()->setTime(5, 15);
+
+    $perDay = collect((new DemoDataGenerator)->generate(10, 150, 42, $until))
+        ->where('type', Event::TYPE_SESSION_START)
+        ->countBy(fn (array $event) => substr($event['occurred_at'], 0, 10));
+
+    $today = $perDay[$until->toDateString()] ?? 0;
+    $yesterday = $perDay[$until->subDay()->toDateString()];
+
+    expect($today)->toBeGreaterThan($yesterday * 0.5);
+});
