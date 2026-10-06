@@ -24,6 +24,8 @@ A small, open source application performance monitor. Your apps send usage, erro
 
 ![Most used features and the machines running the app](docs/screenshots/machines.png)
 
+![Equal errors grouped by message, with how often each happened](docs/screenshots/errors.png)
+
 ## Quick start
 
 You need PHP 8.4, Composer and Node 22. [Laravel Herd](https://herd.laravel.com) installs the first two on Windows and macOS.
@@ -108,6 +110,8 @@ apm.flush
 `ruby clients/ruby/demo_app.rb --key apm_... --url http://localhost:8000` runs a fake desktop app in the terminal that opens sessions, uses features and sometimes fails.
 
 ## How the regression alert works
+
+![The versions page: crash rate per version, adoption over time and the flagged version](docs/screenshots/versions.png)
 
 Crash rate is `crashes ÷ sessions` of a version. A version is flagged when:
 

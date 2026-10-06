@@ -24,6 +24,8 @@ Um monitor de desempenho de aplicações pequeno e de código aberto. Seus apps 
 
 ![Funcionalidades mais usadas e as máquinas que rodam o app](docs/screenshots/machines.png)
 
+![Erros iguais agrupados pela mensagem, com quantas vezes cada um aconteceu](docs/screenshots/errors.png)
+
 ## Começando
 
 Você precisa de PHP 8.4, Composer e Node 22. O [Laravel Herd](https://herd.laravel.com) instala os dois primeiros no Windows e no macOS.
@@ -108,6 +110,8 @@ apm.flush
 `ruby clients/ruby/demo_app.rb --key apm_... --url http://localhost:8000` roda no terminal um app desktop de mentira que abre sessões, usa funcionalidades e às vezes falha.
 
 ## Como o alerta de regressão funciona
+
+![A página de versões: taxa de crash por versão, adoção ao longo do tempo e a versão sinalizada](docs/screenshots/versions.png)
 
 A taxa de crash é `crashes ÷ sessões` de uma versão. Uma versão é sinalizada quando:
 
