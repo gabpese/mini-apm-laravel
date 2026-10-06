@@ -60,7 +60,8 @@ class DemoDataGenerator
     {
         mt_srand($seed);
 
-        $start = ($until ?? now())->toImmutable()->startOfDay()->subDays($days - 1);
+        $end = ($until ?? now())->toImmutable();
+        $start = $end->startOfDay()->subDays($days - 1);
 
         // Each user has a fixed machine and updates some days after a release.
         $pool = [];
@@ -83,7 +84,7 @@ class DemoDataGenerator
                 }
 
                 $version = $this->versionFor($day, $days, $user['delay']);
-                array_push($events, ...$this->session($user, $version, $date));
+                array_push($events, ...$this->session($user, $version, $date, $end));
             }
         }
 
@@ -119,7 +120,7 @@ class DemoDataGenerator
      * @param  array{ref: string, machine: array{0: string, 1: int, 2: string}, delay: int}  $user
      * @return array<int, array<string, mixed>>
      */
-    private function session(array $user, string $version, CarbonImmutable $date): array
+    private function session(array $user, string $version, CarbonImmutable $date, CarbonImmutable $end): array
     {
         $at = $date->addSeconds(mt_rand(8 * 3600, 22 * 3600));
         $base = ['app_version' => $version, 'user_ref' => $user['ref']];
@@ -162,7 +163,12 @@ class DemoDataGenerator
             ];
         }
 
-        return $events;
+        // Today is only partly over: drop what would happen after "now". Done after the random
+        // draws, so the same seed keeps producing the same history up to this moment.
+        return array_values(array_filter(
+            $events,
+            fn (array $event) => CarbonImmutable::parse($event['occurred_at'])->lte($end),
+        ));
     }
 
     /**

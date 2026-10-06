@@ -4,6 +4,7 @@ use App\Models\Event;
 use App\Models\Project;
 use App\Models\User;
 use App\Services\DemoDataGenerator;
+use Carbon\CarbonImmutable;
 
 function crashRate(Project $project, string $version): float
 {
@@ -58,4 +59,14 @@ it('generates the same data for the same seed', function () {
 
     expect($generator->generate(5, 30, 7, $until))->toBe($generator->generate(5, 30, 7, $until))
         ->and($generator->generate(5, 30, 7, $until))->not->toBe($generator->generate(5, 30, 8, $until));
+});
+
+it('never generates events after the moment it runs', function () {
+    // Early in the day, so most of "today" is still ahead and would leak into the future.
+    $until = now()->setTime(4, 30);
+
+    $events = (new DemoDataGenerator)->generate(5, 40, 42, $until);
+
+    expect($events)->not->toBeEmpty()
+        ->and(collect($events)->every(fn (array $event) => CarbonImmutable::parse($event['occurred_at'])->lte($until)))->toBeTrue();
 });

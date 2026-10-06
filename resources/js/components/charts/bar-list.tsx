@@ -34,7 +34,8 @@ export function BarList({
         );
     }
 
-    const scale = max ?? Math.max(...items.map((item) => item.value), 1);
+    // Fall back to 1 only when every value is 0, to avoid dividing by zero. A floor of 1 would flatten fractions.
+    const scale = max ?? (Math.max(...items.map((item) => item.value)) || 1);
 
     return (
         <ul className="space-y-2.5">
