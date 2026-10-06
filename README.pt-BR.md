@@ -171,21 +171,21 @@ Este projeto também existe em Ruby on Rails: [mini-apm-rails](https://github.co
 
 O formato do lote está escrito uma só vez, no [`events.schema.json`](events.schema.json), um JSON Schema. O mesmo arquivo existe nos dois repositórios, e o [`EventSchemaTest`](tests/Feature/Api/EventSchemaTest.php) roda a mesma lista de lotes válidos e inválidos contra o schema e contra esta API: os dois precisam dar o mesmo veredito. O repositório Rails roda os mesmos casos.
 
-| Peça                    | Laravel (este repositório)   | Rails                                            |
-| ----------------------- | ---------------------------- | ------------------------------------------------ |
-| Acesso ao banco         | Eloquent                     | Active Record                                    |
-| Migrations              | `php artisan make:migration` | `bin/rails generate migration`                   |
-| Validação de um lote    | Form Request                 | `events.schema.json` checado com `json_schemer`  |
-| Validação de um projeto | Form Request                 | Validações no model e strong parameters          |
-| Autenticação por chave  | Middleware                   | `before_action` no controller                    |
-| Limite de requisições   | `RateLimiter`                | `rate_limit` no controller                       |
-| Login                   | Fortify                      | Authentication Zero (do starter kit)             |
-| Dados de demonstração   | `php artisan apm:simulate`   | `bin/rails apm:simulate` (tarefa Rake)           |
-| Regra de regressão      | Classe de serviço            | Classe Ruby simples em `app/services`            |
-| Autorização             | Policy                       | Escopo por `Current.user.projects`               |
-| Testes                  | Pest                         | RSpec e FactoryBot                               |
-| Padrão de código        | Pint                         | RuboCop                                          |
-| Banco                   | SQLite                       | PostgreSQL                                       |
+| Peça                    | Laravel (este repositório)   | Rails                                           |
+| ----------------------- | ---------------------------- | ----------------------------------------------- |
+| Acesso ao banco         | Eloquent                     | Active Record                                   |
+| Migrations              | `php artisan make:migration` | `bin/rails generate migration`                  |
+| Validação de um lote    | Form Request                 | `events.schema.json` checado com `json_schemer` |
+| Validação de um projeto | Form Request                 | Validações no model e strong parameters         |
+| Autenticação por chave  | Middleware                   | `before_action` no controller                   |
+| Limite de requisições   | `RateLimiter`                | `rate_limit` no controller                      |
+| Login                   | Fortify                      | Authentication Zero (do starter kit)            |
+| Dados de demonstração   | `php artisan apm:simulate`   | `bin/rails apm:simulate` (tarefa Rake)          |
+| Regra de regressão      | Classe de serviço            | Classe Ruby simples em `app/services`           |
+| Autorização             | Policy                       | Escopo por `Current.user.projects`              |
+| Testes                  | Pest                         | RSpec e FactoryBot                              |
+| Padrão de código        | Pint                         | RuboCop                                         |
+| Banco                   | SQLite                       | PostgreSQL                                      |
 
 Pequenas diferenças: esta API aceita em `occurred_at` qualquer data que o seu parser entenda, enquanto a versão Rails exige ISO 8601; o texto das mensagens de validação muda; e os dados de demonstração têm a mesma forma e a mesma regressão, mas não os mesmos números.
 
