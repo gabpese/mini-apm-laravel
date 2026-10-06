@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/gabpese/mini-apm-rails/events.schema.json",
+  "title": "Mini APM event batch",
+  "description": "Body of POST /api/v1/events. A batch is accepted or rejected as a whole.",
+  "type": "object",
+  "required": ["events"],
+  "properties": {
+    "events": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 100,
+      "items": { "$ref": "#/$defs/event" }
+    }
+  },
+  "$defs": {
+    "event": {
+      "type": "object",
+      "required": ["type", "occurred_at", "app_version"],
+      "properties": {
+        "type": { "enum": ["session_start", "feature_used", "error", "crash"] },
+        "occurred_at": { "type": "string", "format": "date-time" },
+        "app_version": { "type": "string", "minLength": 1, "maxLength": 32 },
+        "user_ref": { "type": ["string", "null"], "maxLength": 255 },
+        "name": { "type": ["string", "null"], "maxLength": 255 },
+        "message": { "type": ["string", "null"], "maxLength": 2000 },
+        "stack": { "type": ["string", "null"], "maxLength": 20000 },
+        "properties": { "type": ["object", "null"] },
+        "env": {
+          "type": ["object", "null"],
+          "properties": {
+            "os": { "type": ["string", "null"], "maxLength": 255 },
+            "ram_mb": { "type": ["integer", "null"], "minimum": 0 },
+            "gpu": { "type": ["string", "null"], "maxLength": 255 }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "type": { "const": "feature_used" } }, "required": ["type"] },
+          "then": {
+            "required": ["name"],
+            "properties": { "name": { "type": "string", "pattern": "\\S" } }
+          }
+        },
+        {
+          "if": { "properties": { "type": { "enum": ["error", "crash"] } }, "required": ["type"] },
+          "then": {
+            "required": ["message"],
+            "properties": { "message": { "type": "string", "pattern": "\\S" } }
+          }
+        }
+      ]
+    }
+  }
+}
