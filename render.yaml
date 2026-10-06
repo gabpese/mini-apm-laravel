@@ -1,0 +1,24 @@
+# Render Blueprint: a free web service that builds the Dockerfile and starts a self-filling demo.
+# New > Blueprint > pick this repository. Then set APP_URL if you want a custom domain.
+#
+# The free plan sleeps after 15 minutes without visits (waking takes about a minute) and its
+# disk is temporary, so SQLite starts empty on every start and the demo data is created again.
+services:
+    - type: web
+      name: mini-apm
+      runtime: docker
+      plan: free
+      healthCheckPath: /up
+      envVars:
+          - key: DEMO_SEED
+            value: 'true'
+          - key: TRUSTED_PROXIES
+            value: '*'
+          - key: DEMO_USER_EMAIL
+            value: demo@mini-apm.example
+          # A public demo password, shown in the README. Never reuse a real one here.
+          - key: DEMO_USER_PASSWORD
+            value: demo-mini-apm-2026
+          # The public key behind the "Browser demo" page: anyone can send events to the demo project.
+          - key: DEMO_API_KEY
+            value: apm_publicdemo0000000000000000000000demo
