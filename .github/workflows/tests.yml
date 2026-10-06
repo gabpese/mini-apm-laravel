@@ -36,3 +36,7 @@ jobs:
 
       - name: Run CI Checks
         run: composer ci:check
+
+      # Ruby comes preinstalled on ubuntu-latest, and both clients use no dependencies.
+      - name: Run client tests (JavaScript and Ruby)
+        run: npm run test:clients
