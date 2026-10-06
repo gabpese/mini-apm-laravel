@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>mini-apm · browser demo</title>
+        <style>
+            :root {
+                color-scheme: light dark;
+                --bg: #fafaf9;
+                --card: #fff;
+                --text: #1c1917;
+                --muted: #78716c;
+                --border: #e7e5e4;
+                --accent: #2563eb;
+                --danger: #dc2626;
+            }
+            @media (prefers-color-scheme: dark) {
+                :root {
+                    --bg: #0c0a09;
+                    --card: #1c1917;
+                    --text: #fafaf9;
+                    --muted: #a8a29e;
+                    --border: #292524;
+                    --accent: #60a5fa;
+                    --danger: #f87171;
+                }
+            }
+            * {
+                box-sizing: border-box;
+            }
+            body {
+                margin: 0;
+                padding: 2rem 1rem;
+                background: var(--bg);
+                color: var(--text);
+                font:
+                    16px/1.5 system-ui,
+                    sans-serif;
+            }
+            main {
+                max-width: 36rem;
+                margin: 0 auto;
+            }
+            h1 {
+                margin: 0 0 0.25rem;
+                font-size: 1.5rem;
+            }
+            p {
+                margin: 0 0 1.5rem;
+                color: var(--muted);
+            }
+            section {
+                margin-bottom: 1rem;
+                padding: 1.25rem;
+                background: var(--card);
+                border: 1px solid var(--border);
+                border-radius: 0.75rem;
+            }
+            h2 {
+                margin: 0 0 0.75rem;
+                font-size: 0.8rem;
+                letter-spacing: 0.05em;
+                text-transform: uppercase;
+                color: var(--muted);
+            }
+            label {
+                display: block;
+                margin-bottom: 0.75rem;
+                font-size: 0.85rem;
+                color: var(--muted);
+            }
+            input,
+            select {
+                display: block;
+                width: 100%;
+                margin-top: 0.25rem;
+                padding: 0.5rem 0.65rem;
+                background: transparent;
+                color: var(--text);
+                border: 1px solid var(--border);
+                border-radius: 0.5rem;
+                font: inherit;
+            }
+            .row {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+            button {
+                padding: 0.5rem 0.9rem;
+                background: var(--accent);
+                color: #fff;
+                border: 0;
+                border-radius: 0.5rem;
+                font: inherit;
+                cursor: pointer;
+            }
+            button.secondary {
+                background: transparent;
+                color: var(--text);
+                border: 1px solid var(--border);
+            }
+            button.danger {
+                background: var(--danger);
+            }
+            button:disabled {
+                opacity: 0.45;
+                cursor: not-allowed;
+            }
+            #log {
+                margin: 0;
+                padding: 0;
+                max-height: 12rem;
+                overflow: auto;
+                list-style: none;
+                font:
+                    0.8rem/1.6 ui-monospace,
+                    monospace;
+            }
+            #status {
+                margin: 0 0 0.75rem;
+                font-size: 0.85rem;
+                color: var(--muted);
+            }
+        </style>
+    </head>
+    <body>
+        <main>
+            <h1>mini-apm browser demo</h1>
+            <p>
+                Every click here is sent to the mini-apm API and shows up in the
+                project dashboard.
+            </p>
+
+            <section>
+                <h2>1 · Connect</h2>
+                <label>
+                    Server URL
+                    <input id="endpoint" autocomplete="off" />
+                </label>
+                <label>
+                    Project API key
+                    <input id="key" placeholder="apm_..." autocomplete="off" />
+                </label>
+                <label>
+                    Pretend this app is version
+                    <select id="version">
+                        <option>1.0.0</option>
+                        <option>1.1.0</option>
+                        <option selected>1.2.0</option>
+                    </select>
+                </label>
+                <button id="start">Start session</button>
+            </section>
+
+            <section>
+                <h2>2 · Use the app</h2>
+                <p id="status">Not started.</p>
+                <div class="row">
+                    <button
+                        class="secondary"
+                        data-feature="exportar_pdf"
+                        disabled
+                    >
+                        Export PDF
+                    </button>
+                    <button
+                        class="secondary"
+                        data-feature="importar_csv"
+                        disabled
+                    >
+                        Import CSV
+                    </button>
+                    <button
+                        class="secondary"
+                        data-feature="compartilhar"
+                        disabled
+                    >
+                        Share
+                    </button>
+                </div>
+            </section>
+
+            <section>
+                <h2>3 · Break it</h2>
+                <div class="row">
+                    <button class="danger" id="error" disabled>
+                        Throw an uncaught error
+                    </button>
+                    <button class="danger" id="crash" disabled>
+                        Report a crash
+                    </button>
+                    <button class="secondary" id="flush" disabled>
+                        Send now
+                    </button>
+                </div>
+            </section>
+
+            <section>
+                <h2>Log</h2>
+                <ul id="log"></ul>
+            </section>
+        </main>
+
+        <script type="module">
+            import { MiniApm } from '/demo/mini-apm.js';
+
+            const $ = (id) => document.getElementById(id);
+            const params = new URLSearchParams(location.search);
+            const store = {
+                get: (k) => {
+                    try {
+                        return localStorage.getItem(k);
+                    } catch {
+                        return null;
+                    }
+                },
+                set: (k, v) => {
+                    try {
+                        localStorage.setItem(k, v);
+                    } catch {}
+                },
+            };
+
+            $('endpoint').value =
+                params.get('endpoint') ??
+                store.get('demo_endpoint') ??
+                location.origin;
+            $('key').value = params.get('key') ?? store.get('demo_key') ?? '';
+
+            let apm = null;
+            const log = (text) => {
+                const li = document.createElement('li');
+                li.textContent = `${new Date().toLocaleTimeString()}  ${text}`;
+                $('log').prepend(li);
+            };
+            const enable = () =>
+                document
+                    .querySelectorAll('[data-feature], #error, #crash, #flush')
+                    .forEach((b) => (b.disabled = false));
+
+            $('start').onclick = () => {
+                if (apm) apm.stop();
+                store.set('demo_endpoint', $('endpoint').value);
+                store.set('demo_key', $('key').value);
+
+                try {
+                    apm = new MiniApm({
+                        endpoint: $('endpoint').value,
+                        apiKey: $('key').value,
+                        appVersion: $('version').value,
+                    });
+                } catch (e) {
+                    return log(e.message);
+                }
+
+                apm.start();
+                enable();
+                log(`session started on version ${$('version').value}`);
+            };
+
+            document.querySelectorAll('[data-feature]').forEach((button) => {
+                button.onclick = () => {
+                    apm.track(button.dataset.feature);
+                    log(`feature: ${button.dataset.feature}`);
+                };
+            });
+
+            // Nothing catches this one: the client picks it up from window.onerror.
+            $('error').onclick = () => {
+                log('throwing an uncaught error');
+                setTimeout(() => {
+                    throw new Error(
+                        'Demo: something broke while rendering the chart',
+                    );
+                });
+            };
+
+            $('crash').onclick = () => {
+                apm.captureException(new Error('Demo: the app crashed'), {
+                    fatal: true,
+                });
+                log('crash reported');
+            };
+
+            $('flush').onclick = async () => {
+                const ok = await apm.flush();
+                log(
+                    ok
+                        ? 'sent: accepted by the API'
+                        : 'not accepted: check the server URL and the API key',
+                );
+            };
+
+            setInterval(() => {
+                $('status').textContent = apm
+                    ? `${apm.queue.length} event(s) waiting; sent automatically every 5 s.`
+                    : 'Not started.';
+            }, 500);
+        </script>
+    </body>
+</html>
