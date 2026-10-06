@@ -65,6 +65,18 @@ return [
     |
     */
 
+    /*
+    |--------------------------------------------------------------------------
+    | Trusted Proxies
+    |--------------------------------------------------------------------------
+    |
+    | Behind a load balancer that ends HTTPS (Render, Laravel Cloud), generated links must keep
+    | https. Set TRUSTED_PROXIES to "*" only when the app is reachable through such a proxy.
+    |
+    */
+
+    'trusted_proxies' => env('TRUSTED_PROXIES'),
+
     'timezone' => 'UTC',
 
     /*

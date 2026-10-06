@@ -53,13 +53,19 @@ class ApiKey extends Model
     {
         $plain = self::PREFIX.Str::random(40);
 
-        $apiKey = $project->apiKeys()->create([
+        return [self::fromPlain($project, $plain, $name), $plain];
+    }
+
+    /**
+     * Register a key whose text is already known, such as the fixed public key of a demo.
+     */
+    public static function fromPlain(Project $project, string $plain, ?string $name = null): self
+    {
+        return $project->apiKeys()->create([
             'name' => $name,
             'key_prefix' => substr($plain, 0, 12),
             'key_hash' => self::hash($plain),
         ]);
-
-        return [$apiKey, $plain];
     }
 
     public static function hash(string $plain): string

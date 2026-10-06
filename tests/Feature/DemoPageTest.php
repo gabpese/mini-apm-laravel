@@ -24,3 +24,23 @@ it('lets browsers on another origin call the ingestion API', function () {
         ->assertSuccessful()
         ->assertHeader('Access-Control-Allow-Origin', '*');
 });
+
+describe('public demo key', function () {
+    it('opens the demo with the key filled in when one is configured', function () {
+        config(['services.demo.api_key' => 'apm_publicdemokey0123456789']);
+
+        $this->get('/demo')->assertRedirect('/demo?key=apm_publicdemokey0123456789');
+    });
+
+    it('does not redirect when the visitor already brought a key', function () {
+        config(['services.demo.api_key' => 'apm_publicdemokey0123456789']);
+
+        $this->get('/demo?key=apm_mine')->assertOk();
+    });
+
+    it('does not redirect when no demo key is configured', function () {
+        config(['services.demo.api_key' => null]);
+
+        $this->get('/demo')->assertOk();
+    });
+});

@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\ApiKey;
 use App\Models\Event;
 use App\Models\Project;
 use App\Models\User;
@@ -69,4 +70,52 @@ it('never generates events after the moment it runs', function () {
 
     expect($events)->not->toBeEmpty()
         ->and(collect($events)->every(fn (array $event) => CarbonImmutable::parse($event['occurred_at'])->lte($until)))->toBeTrue();
+});
+
+describe('with --api-key', function () {
+    $key = 'apm_publicdemokey0123456789';
+
+    it('registers that exact key, and it works on the API', function () use ($key) {
+        User::factory()->create();
+
+        $this->artisan("apm:simulate --days=3 --users=20 --api-key=$key")
+            ->doesntExpectOutputToContain('API key created')
+            ->assertSuccessful();
+
+        $project = Project::sole();
+        expect($project->apiKeys)->toHaveCount(1)
+            ->and(ApiKey::findActive($key)?->project_id)->toBe($project->id);
+
+        $this->postJson('/api/v1/events', ['events' => [[
+            'type' => 'session_start',
+            'occurred_at' => now()->toIso8601String(),
+            'app_version' => '1.0.0',
+        ]]], ['Authorization' => "Bearer $key"])->assertStatus(202);
+    });
+
+    it('does not register the key twice when run again', function () use ($key) {
+        User::factory()->create();
+
+        $this->artisan("apm:simulate --days=2 --users=10 --api-key=$key")->assertSuccessful();
+        $this->artisan("apm:simulate --days=2 --users=10 --fresh --api-key=$key")->assertSuccessful();
+
+        expect(ApiKey::count())->toBe(1);
+    });
+
+    it('rejects a key in the wrong format', function (string $bad) {
+        User::factory()->create();
+
+        $this->artisan("apm:simulate --days=2 --users=10 --api-key=$bad")->assertFailed();
+
+        expect(Project::count())->toBe(1)->and(Event::count())->toBe(0);
+    })->with(['no prefix' => 'publicdemokey0123456789012', 'too short' => 'apm_short', 'bad characters' => 'apm_publicdemo-key-0123456789']);
+
+    it('refuses a key that belongs to another project', function () use ($key) {
+        User::factory()->create();
+        ApiKey::fromPlain(Project::factory()->create(), $key);
+
+        $this->artisan("apm:simulate --days=2 --users=10 --api-key=$key")->assertFailed();
+
+        expect(Event::count())->toBe(0);
+    });
 });

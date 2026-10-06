@@ -28,6 +28,19 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    /*
+     * The public demo. When DEMO_API_KEY is set, /demo opens with that key filled in, so a
+     * visitor can click around and send real events to the demo project without signing in.
+     * Leave it empty everywhere that is not a throwaway demo.
+     */
+    'demo' => [
+        'api_key' => env('DEMO_API_KEY'),
+        'user' => [
+            'email' => env('DEMO_USER_EMAIL'),
+            'password' => env('DEMO_USER_PASSWORD'),
+        ],
+    ],
+
     'slack' => [
         'notifications' => [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),

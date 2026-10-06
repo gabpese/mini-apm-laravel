@@ -56,7 +56,7 @@ class DemoDataGenerator
     /**
      * @return array<int, array<string, mixed>> events in the API batch format, oldest first
      */
-    public function generate(int $days = 21, int $users = 150, int $seed = 42, ?CarbonInterface $until = null): array
+    public function generate(int $days = 30, int $users = 150, int $seed = 42, ?CarbonInterface $until = null): array
     {
         mt_srand($seed);
 
