@@ -11,7 +11,7 @@
 require 'optparse'
 require_relative 'lib/mini_apm'
 
-FEATURES = %w[exportar_pdf importar_csv compartilhar modo_escuro busca_avancada sincronizar].freeze
+FEATURES = %w[export_pdf import_csv share dark_mode advanced_search sync].freeze
 
 options = {
   url: ENV.fetch('MINI_APM_URL', 'http://localhost:8000'),

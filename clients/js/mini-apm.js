@@ -3,7 +3,7 @@
  *
  *   const apm = new MiniApm({ endpoint: 'https://host', apiKey: 'apm_...', appVersion: '1.2.0' });
  *   apm.start();
- *   apm.track('exportar_pdf');
+ *   apm.track('export_pdf');
  *   apm.captureException(error, { fatal: true });
  */
 

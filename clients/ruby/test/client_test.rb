@@ -75,7 +75,7 @@ class ClientTest < Minitest::Test
 
   def test_posts_to_the_versioned_endpoint_with_the_key_as_a_bearer_token
     apm = client
-    apm.track('exportar_pdf')
+    apm.track('export_pdf')
     apm.flush
 
     request = @api.requests.first
@@ -86,12 +86,12 @@ class ClientTest < Minitest::Test
 
   def test_track_records_a_feature_with_its_properties
     apm = client
-    apm.track('exportar_pdf', pages: 3)
+    apm.track('export_pdf', pages: 3)
     apm.flush
 
     event = @api.requests.first[:body]['events'].first
     assert_equal 'feature_used', event['type']
-    assert_equal 'exportar_pdf', event['name']
+    assert_equal 'export_pdf', event['name']
     assert_equal({ 'pages' => 3 }, event['properties'])
   end
 

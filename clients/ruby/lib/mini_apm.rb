@@ -12,7 +12,7 @@ require 'uri'
 #
 #   apm = MiniApm::Client.new(endpoint: 'https://host', api_key: 'apm_...', app_version: '1.2.0')
 #   apm.session_start
-#   apm.track('exportar_pdf')
+#   apm.track('export_pdf')
 #   begin
 #     risky
 #   rescue => e

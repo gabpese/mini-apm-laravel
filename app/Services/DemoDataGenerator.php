@@ -21,23 +21,23 @@ class DemoDataGenerator
     public const CRASH_RATES = ['1.0.0' => 0.015, '1.1.0' => 0.018, '1.2.0' => 0.07];
 
     private const FEATURES = [
-        'exportar_pdf' => 30,
-        'importar_csv' => 22,
-        'compartilhar' => 15,
-        'modo_escuro' => 10,
-        'busca_avancada' => 14,
-        'sincronizar' => 9,
+        'export_pdf' => 30,
+        'import_csv' => 22,
+        'share' => 15,
+        'dark_mode' => 10,
+        'advanced_search' => 14,
+        'sync' => 9,
     ];
 
     private const ERRORS = [
-        ['Timeout ao sincronizar com o servidor', 'sync.rb:41:in `push`'],
-        ['Arquivo CSV com formato inválido', 'importer.rb:18:in `parse`'],
-        ['Falha ao gerar o PDF', 'exporter.rb:77:in `render`'],
+        ['Timeout while syncing with the server', 'sync.rb:41:in `push`'],
+        ['Invalid CSV file format', 'importer.rb:18:in `parse`'],
+        ['Failed to generate the PDF', 'exporter.rb:77:in `render`'],
     ];
 
     private const COMMON_CRASHES = [
         ['Undefined method for nil', 'cache.rb:12:in `fetch`'],
-        ['Memória insuficiente', 'loader.rb:9:in `load_all`'],
+        ['Out of memory', 'loader.rb:9:in `load_all`'],
     ];
 
     private const REGRESSION_CRASH = ['NoMethodError: undefined method `render_chart` for nil', 'dashboard.rb:56:in `draw`'];

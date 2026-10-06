@@ -28,7 +28,7 @@ function makeEvent(Project $project, string $type, array $attributes = []): Even
 {
     return Event::factory()->for($project)->create($attributes + [
         'type' => $type,
-        'name' => $type === 'feature_used' ? 'exportar_pdf' : null,
+        'name' => $type === 'feature_used' ? 'export_pdf' : null,
         'app_version' => '1.0.0',
         'occurred_at' => now()->subDay(),
     ]);

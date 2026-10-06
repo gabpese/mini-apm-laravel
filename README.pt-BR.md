@@ -48,7 +48,7 @@ curl -X POST http://localhost:8000/api/v1/events \
   -d '{"events":[
         {"type":"session_start","occurred_at":"2026-10-20T14:03:00Z","app_version":"1.2.0","user_ref":"u_8f3a",
          "env":{"os":"Windows 11","ram_mb":16384,"gpu":"GTX 1660"}},
-        {"type":"feature_used","name":"exportar_pdf","occurred_at":"2026-10-20T14:05:12Z","app_version":"1.2.0","user_ref":"u_8f3a"},
+        {"type":"feature_used","name":"export_pdf","occurred_at":"2026-10-20T14:05:12Z","app_version":"1.2.0","user_ref":"u_8f3a"},
         {"type":"crash","message":"Undefined method for nil","stack":"app.rb:10:in `run`","occurred_at":"2026-10-20T14:07:40Z","app_version":"1.2.0","user_ref":"u_8f3a"}
       ]}'
 ```
@@ -85,7 +85,7 @@ const apm = new MiniApm({
     appVersion: '1.2.0',
 });
 apm.start(); // abre uma sessão
-apm.track('exportar_pdf'); // uma funcionalidade foi usada
+apm.track('export_pdf'); // uma funcionalidade foi usada
 apm.captureException(error, { fatal: true }); // um crash. Sem `fatal`, um erro.
 ```
 
@@ -96,7 +96,7 @@ Com o servidor rodando, abra `/demo`: uma página cujos botões enviam eventos r
 ```ruby
 apm = MiniApm::Client.new(endpoint: 'http://localhost:8000', api_key: 'apm_...', app_version: '1.2.0')
 apm.session_start
-apm.track('exportar_pdf')
+apm.track('export_pdf')
 begin
   risky
 rescue => e

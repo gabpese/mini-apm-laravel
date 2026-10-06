@@ -118,7 +118,7 @@ describe('storing events', function () {
     it('answers 202 and stores a session and its events', function () {
         ingest($this->plainKey, [
             sessionStart(),
-            ['type' => 'feature_used', 'name' => 'exportar_pdf', 'occurred_at' => '2026-10-20T14:05:12Z', 'app_version' => '1.2.0', 'user_ref' => 'u_8f3a'],
+            ['type' => 'feature_used', 'name' => 'export_pdf', 'occurred_at' => '2026-10-20T14:05:12Z', 'app_version' => '1.2.0', 'user_ref' => 'u_8f3a'],
             crash(),
         ])->assertStatus(202)->assertExactJson(['accepted' => 3]);
 
@@ -128,7 +128,7 @@ describe('storing events', function () {
             ->and($session->ram_mb)->toBe(16384)
             ->and($session->gpu)->toBe('GTX 1660')
             ->and(Event::count())->toBe(3)
-            ->and(Event::where('type', 'feature_used')->sole()->name)->toBe('exportar_pdf')
+            ->and(Event::where('type', 'feature_used')->sole()->name)->toBe('export_pdf')
             ->and(Event::where('session_id', $session->id)->count())->toBe(3);
     });
 

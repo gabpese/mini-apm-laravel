@@ -52,7 +52,7 @@ test('start opens a session with the machine data', async () => {
 test('sends to the versioned endpoint with the key as a Bearer token', async () => {
     const { apm, requests } = setup();
 
-    apm.track('exportar_pdf');
+    apm.track('export_pdf');
     await apm.flush();
 
     assert.equal(requests[0].url, 'https://apm.test/api/v1/events');
@@ -64,12 +64,12 @@ test('sends to the versioned endpoint with the key as a Bearer token', async () 
 test('track records a feature with its properties', async () => {
     const { apm, requests } = setup();
 
-    apm.track('exportar_pdf', { pages: 3 });
+    apm.track('export_pdf', { pages: 3 });
     await apm.flush();
 
     const [event] = requests[0].body.events;
     assert.equal(event.type, 'feature_used');
-    assert.equal(event.name, 'exportar_pdf');
+    assert.equal(event.name, 'export_pdf');
     assert.deepEqual(event.properties, { pages: 3 });
 });
 

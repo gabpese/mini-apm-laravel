@@ -15,7 +15,7 @@ beforeEach(function () {
 
 it('shows the overview with totals, a daily series, features and environment', function () {
     AppSession::factory()->count(3)->for($this->project)->create(['started_at' => now()->subDay(), 'ram_mb' => 4096]);
-    Event::factory()->count(2)->for($this->project)->create(['name' => 'exportar_pdf', 'occurred_at' => now()->subDay()]);
+    Event::factory()->count(2)->for($this->project)->create(['name' => 'export_pdf', 'occurred_at' => now()->subDay()]);
 
     $this->get(route('projects.show', $this->project))
         ->assertOk()
