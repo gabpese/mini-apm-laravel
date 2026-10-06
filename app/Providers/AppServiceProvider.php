@@ -2,9 +2,13 @@
 
 namespace App\Providers;
 
+use App\Http\Middleware\AuthenticateApiKey;
 use Carbon\CarbonImmutable;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
@@ -24,6 +28,18 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
+        $this->configureRateLimiting();
+    }
+
+    /**
+     * Limit the event ingestion API per API key and per IP address.
+     */
+    protected function configureRateLimiting(): void
+    {
+        RateLimiter::for('ingest', fn (Request $request): array => [
+            Limit::perMinute(120)->by('key:'.sha1((string) AuthenticateApiKey::plainKey($request))),
+            Limit::perMinute(600)->by('ip:'.$request->ip()),
+        ]);
     }
 
     /**
