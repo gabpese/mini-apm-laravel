@@ -165,6 +165,30 @@ Uma única aplicação Laravel serve a API e o painel, então não há um projet
 - **O simulador usa o mesmo código de ingestão da API**, então os dados de demonstração provam que o caminho real funciona.
 - **O painel calcula tudo com consultas agregadas**, então uma página custa o mesmo com dez eventos ou dez milhões.
 
+## Mesma API, duas implementações
+
+Este projeto também existe em Ruby on Rails: [mini-apm-rails](https://github.com/gabpese/mini-apm-rails). É o mesmo produto construído duas vezes, para comparar como cada framework resolve o mesmo problema. Os dois aceitam os mesmos lotes e respondem os mesmos códigos de status.
+
+O formato do lote está escrito uma só vez, no [`events.schema.json`](events.schema.json), um JSON Schema. O mesmo arquivo existe nos dois repositórios, e o [`EventSchemaTest`](tests/Feature/Api/EventSchemaTest.php) roda a mesma lista de lotes válidos e inválidos contra o schema e contra esta API: os dois precisam dar o mesmo veredito. O repositório Rails roda os mesmos casos.
+
+| Peça                    | Laravel (este repositório)   | Rails                                            |
+| ----------------------- | ---------------------------- | ------------------------------------------------ |
+| Acesso ao banco         | Eloquent                     | Active Record                                    |
+| Migrations              | `php artisan make:migration` | `bin/rails generate migration`                   |
+| Validação de um lote    | Form Request                 | `events.schema.json` checado com `json_schemer`  |
+| Validação de um projeto | Form Request                 | Validações no model e strong parameters          |
+| Autenticação por chave  | Middleware                   | `before_action` no controller                    |
+| Limite de requisições   | `RateLimiter`                | `rate_limit` no controller                       |
+| Login                   | Fortify                      | Authentication Zero (do starter kit)             |
+| Dados de demonstração   | `php artisan apm:simulate`   | `bin/rails apm:simulate` (tarefa Rake)           |
+| Regra de regressão      | Classe de serviço            | Classe Ruby simples em `app/services`            |
+| Autorização             | Policy                       | Escopo por `Current.user.projects`               |
+| Testes                  | Pest                         | RSpec e FactoryBot                               |
+| Padrão de código        | Pint                         | RuboCop                                          |
+| Banco                   | SQLite                       | PostgreSQL                                       |
+
+Pequenas diferenças: esta API aceita em `occurred_at` qualquer data que o seu parser entenda, enquanto a versão Rails exige ISO 8601; o texto das mensagens de validação muda; e os dados de demonstração têm a mesma forma e a mesma regressão, mas não os mesmos números.
+
 ## Desenvolvimento
 
 ```bash

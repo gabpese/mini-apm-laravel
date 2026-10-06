@@ -165,6 +165,30 @@ One Laravel application serves both the API and the dashboard, so there is no se
 - **The simulator uses the same ingestion code as the API**, so demo data is proof that the real path works.
 - **The dashboard computes everything with aggregate queries**, so a page costs the same with ten events or ten million.
 
+## Same API, two implementations
+
+This project also exists in Ruby on Rails: [mini-apm-rails](https://github.com/gabpese/mini-apm-rails). It is the same product built twice, to compare how each framework solves the same problem. Both accept the same batches and answer the same status codes.
+
+The batch format is written down once, in [`events.schema.json`](events.schema.json), a JSON Schema. The same file lives in both repositories, and [`EventSchemaTest`](tests/Feature/Api/EventSchemaTest.php) runs the same list of valid and invalid batches against the schema and against this API: both must give the same verdict. The Rails repository runs the same cases.
+
+| Piece                  | Laravel (this repository)    | Rails                                            |
+| ---------------------- | ---------------------------- | ------------------------------------------------ |
+| Database access        | Eloquent                     | Active Record                                    |
+| Migrations             | `php artisan make:migration` | `bin/rails generate migration`                   |
+| Validating a batch     | Form Request                 | `events.schema.json` checked with `json_schemer` |
+| Validating a project   | Form Request                 | Model validations and strong parameters          |
+| API key authentication | Middleware                   | `before_action` in the controller                |
+| Rate limiting          | `RateLimiter`                | `rate_limit` in the controller                   |
+| Login                  | Fortify                      | Authentication Zero (from the starter kit)       |
+| Demo data              | `php artisan apm:simulate`   | `bin/rails apm:simulate` (Rake task)             |
+| Crash regression rule  | Service class                | Plain Ruby class in `app/services`               |
+| Authorization          | Policy                       | Scoping through `Current.user.projects`          |
+| Tests                  | Pest                         | RSpec and FactoryBot                             |
+| Code style             | Pint                         | RuboCop                                          |
+| Database               | SQLite                       | PostgreSQL                                       |
+
+Small differences: this API accepts any date its parser understands in `occurred_at`, where the Rails one requires ISO 8601; the text of validation messages differs; and the demo data has the same shape and regression, but not the same numbers.
+
 ## Development
 
 ```bash
