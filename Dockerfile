@@ -8,7 +8,7 @@ RUN install-php-extensions pdo_sqlite intl bcmath zip opcache
 
 # Node is only needed to build the assets. Vite's Wayfinder plugin also runs PHP while building.
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends curl ca-certificates git unzip \
+    && apt-get install -y --no-install-recommends curl ca-certificates git unzip libcap2-bin \
     && curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
     && apt-get install -y --no-install-recommends nodejs \
     && rm -rf /var/lib/apt/lists/*
@@ -45,6 +45,10 @@ ENV APP_ENV=production \
     CACHE_STORE=database \
     QUEUE_CONNECTION=sync \
     PORT=8080
+
+# The image gives frankenphp a file capability to bind ports below 1024. Hosts that block
+# capabilities (Render among them) then refuse to run it. The app listens on 8080, so drop it.
+RUN setcap -r /usr/local/bin/frankenphp
 
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
