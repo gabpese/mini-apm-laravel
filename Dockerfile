@@ -36,7 +36,8 @@ RUN composer dump-autoload --optimize \
 RUN mkdir -p storage/database storage/framework/cache storage/framework/sessions storage/framework/views storage/logs bootstrap/cache \
     && chmod -R ug+rwX storage bootstrap/cache
 
-ENV APP_ENV=production \
+ENV APP_NAME=mini-apm \
+    APP_ENV=production \
     APP_DEBUG=false \
     LOG_CHANNEL=stderr \
     DB_CONNECTION=sqlite \

@@ -7,6 +7,8 @@
 
 **Read this in:** English · [Português](README.pt-BR.md)
 
+**Live demo:** [mini-apm.onrender.com](https://mini-apm.onrender.com). Sign in with `demo@mini-apm.example` / `demo-mini-apm-2026`. It runs on a free plan, so the first visit can take about a minute while it wakes up.
+
 A small, open source application performance monitor. Your apps send usage, error and crash events to a REST API, and a dashboard shows what is happening, including which **version** started crashing more than the one before it.
 
 ![The project overview: totals, daily charts and a crash regression alert](docs/screenshots/overview.png)

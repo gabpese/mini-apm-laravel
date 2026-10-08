@@ -7,6 +7,8 @@
 
 **Leia em:** [English](README.md) · Português
 
+**Demo online:** [mini-apm.onrender.com](https://mini-apm.onrender.com). Entre com `demo@mini-apm.example` / `demo-mini-apm-2026`. Ela roda num plano gratuito, então a primeira visita pode levar cerca de um minuto enquanto o app acorda.
+
 Um monitor de desempenho de aplicações pequeno e de código aberto. Seus apps enviam eventos de uso, erros e crashes para uma API REST, e um painel mostra o que está acontecendo, inclusive qual **versão** passou a ter mais crashes que a anterior.
 
 ![A visão geral do projeto: totais, gráficos por dia e um alerta de regressão de crashes](docs/screenshots/overview.png)
